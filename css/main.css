@@ -1,9 +1,9 @@
-/* ============================================================
+/*
    CineScope — Main Stylesheet
    Dark cinematic theme | Cormorant Garamond headings | Inter body
-   ============================================================ */
+*/
 
-/* ── Custom Properties ──────────────────────────────────────── */
+/* Custom Properties */
 :root {
   --bg:          #09090f;
   --bg-surface:  #111118;
@@ -33,7 +33,7 @@
   --transition: 200ms ease;
 }
 
-/* ── Reset ──────────────────────────────────────────────────── */
+/* Reset */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html { scroll-behavior: smooth; }
@@ -52,7 +52,7 @@ a  { color: inherit; text-decoration: none; }
 button { cursor: pointer; border: none; background: none; font: inherit; color: inherit; }
 ul { list-style: none; }
 
-/* ── Typography ─────────────────────────────────────────────── */
+/*  Typography */
 h1, h2, h3, h4 {
   font-family: 'Cormorant Garamond', serif;
   font-weight: 600;
@@ -64,13 +64,13 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.4rem); }
 h3 { font-size: clamp(1.2rem, 2vw, 1.6rem); }
 h4 { font-size: 1.1rem; }
 
-/* ── Scrollbar ──────────────────────────────────────────────── */
+/*  Scrollbar */
 ::-webkit-scrollbar              { width: 6px; }
 ::-webkit-scrollbar-track        { background: var(--bg-surface); }
 ::-webkit-scrollbar-thumb        { background: var(--border-light); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover  { background: var(--gold-dim); }
 
-/* ── Layout Utilities ───────────────────────────────────────── */
+/*  Layout Utilities */
 .container {
   width: 100%;
   max-width: 1280px;
@@ -98,7 +98,7 @@ h4 { font-size: 1.1rem; }
   font-weight: 600;
 }
 
-/* ── Navbar ─────────────────────────────────────────────────── */
+/*  Navbar */
 .navbar {
   position: sticky;
   top: 0;
@@ -209,7 +209,7 @@ h4 { font-size: 1.1rem; }
   transition: transform var(--transition), opacity var(--transition);
 }
 
-/* ── Hero ────────────────────────────────────────────────────── */
+/* Hero */
 .hero {
   position: relative;
   min-height: 520px;
@@ -272,7 +272,7 @@ h4 { font-size: 1.1rem; }
 }
 .hero-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
 
-/* ── Genre Filter Pills ─────────────────────────────────────── */
+/*  Genre Filter Pills */
 .genre-bar {
   display: flex;
   gap: 0.5rem;
@@ -296,7 +296,7 @@ h4 { font-size: 1.1rem; }
 .genre-pill:hover          { border-color: var(--gold-dim); color: var(--text-primary); }
 .genre-pill.active         { background: var(--gold); border-color: var(--gold); color: var(--bg); font-weight: 600; }
 
-/* ── Movie Grid ─────────────────────────────────────────────── */
+/* Movie Grid */
 .movie-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -398,7 +398,7 @@ h4 { font-size: 1.1rem; }
 .movie-card-save:hover              { background: var(--gold); color: var(--bg); }
 .movie-card-save.saved             { opacity: 1; color: var(--gold); }
 
-/* ── Movie Detail ────────────────────────────────────────────── */
+/*  Movie Detail */
 .movie-detail-hero {
   position: relative;
   min-height: 440px;
@@ -543,7 +543,7 @@ h4 { font-size: 1.1rem; }
   text-overflow: ellipsis;
 }
 
-/* ── Buttons ─────────────────────────────────────────────────── */
+/* Buttons */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -567,7 +567,7 @@ h4 { font-size: 1.1rem; }
 .btn-sm              { padding: 0.35rem 0.9rem; font-size: 0.8rem; }
 .btn-lg              { padding: 0.75rem 1.75rem; font-size: 1rem; }
 
-/* ── Search Page ─────────────────────────────────────────────── */
+/* Search Page */
 .search-header {
   padding: 3rem 1.25rem 2rem;
   max-width: 1280px;
@@ -604,7 +604,7 @@ h4 { font-size: 1.1rem; }
 }
 .search-bar-large button:hover { background: var(--gold-light); }
 
-/* ── Pagination ──────────────────────────────────────────────── */
+/* Pagination */
 .pagination {
   display: flex;
   align-items: center;
@@ -630,7 +630,7 @@ h4 { font-size: 1.1rem; }
 .pagination-btn:disabled             { opacity: 0.35; cursor: not-allowed; }
 .pagination-ellipsis                 { color: var(--text-muted); padding: 0 0.25rem; }
 
-/* ── Modals ──────────────────────────────────────────────────── */
+/* Modals */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -730,7 +730,7 @@ h4 { font-size: 1.1rem; }
   margin-bottom: 1rem;
 }
 
-/* ── Auth Form ───────────────────────────────────────────────── */
+/* Auth Form */
 .auth-form-wrap { padding: 2rem; }
 .auth-form-title { text-align: center; margin-bottom: 0.35rem; }
 .auth-form-subtitle {
@@ -796,7 +796,7 @@ h4 { font-size: 1.1rem; }
 }
 .form-submit:hover { background: var(--gold-light); }
 
-/* ── Lists Page ──────────────────────────────────────────────── */
+/*  Lists Page */
 .lists-tabs {
   display: flex;
   gap: 0;
@@ -824,7 +824,7 @@ h4 { font-size: 1.1rem; }
 .empty-state h3   { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: var(--text-secondary); margin-bottom: 0.5rem; }
 .empty-state p    { font-size: 0.875rem; }
 
-/* ── Loading Spinner ─────────────────────────────────────────── */
+/* Loading Spinner */
 .spinner {
   width: 36px;
   height: 36px;
@@ -847,7 +847,7 @@ h4 { font-size: 1.1rem; }
   padding: 4rem 0;
 }
 
-/* ── Toast ───────────────────────────────────────────────────── */
+/*  Toast */
 .toast {
   position: fixed;
   bottom: 1.5rem;
@@ -870,7 +870,7 @@ h4 { font-size: 1.1rem; }
 .toast.toast--success { border-color: var(--success); color: var(--success); }
 .toast.toast--error   { border-color: var(--danger);  color: var(--danger); }
 
-/* ── Error / Not Found ───────────────────────────────────────── */
+/*  Error / Not Found */
 .error-page {
   display: flex;
   flex-direction: column;
@@ -884,7 +884,7 @@ h4 { font-size: 1.1rem; }
 .error-page h1 { color: var(--gold); }
 .error-page p  { color: var(--text-secondary); max-width: 400px; }
 
-/* ── Responsive ──────────────────────────────────────────────── */
+/*  Responsive */
 @media (max-width: 768px) {
   .nav-links {
     display: none;
