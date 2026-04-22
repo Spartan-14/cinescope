@@ -24,7 +24,12 @@ export function showSpinner() {
     '<div class="spinner-fullpage"><div class="spinner"></div></div>';
 }
 
+let loginInProgress = false;
+
 export async function startTmdbLogin() {
+  if (loginInProgress) return;
+  loginInProgress = true;
+
   try {
     const response = await fetch(
       `${CONFIG.TMDB_BASE_URL}/authentication/token/new?api_key=${CONFIG.TMDB_API_KEY}`
@@ -35,24 +40,34 @@ export async function startTmdbLogin() {
     }
 
     const data = await response.json();
+    console.log('FULL TOKEN RESPONSE:', data);
 
     if (!data.request_token) {
       throw new Error('TMDB did not return a request token.');
     }
 
-    console.log('TMDB raw token:', data.request_token);
-    console.log(
-      'TMDB auth URL:',
-      `https://www.themoviedb.org/auth/access?request_token=${encodeURIComponent(data.request_token)}`
-    );
-
     sessionStorage.setItem('tmdb_request_token', data.request_token);
 
-    window.location.href =
-      `https://www.themoviedb.org/auth/access?request_token=${encodeURIComponent(data.request_token)}`;
+    const authUrl =
+      `https://www.themoviedb.org/authenticate/${encodeURIComponent(data.request_token)}`;
+
+    console.log('TMDB auth URL:', authUrl);
+
+    const link = document.createElement('a');
+    link.href = authUrl;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    showToast('Approve CineScope in the new tab, then return here and click "I Approved It".');
+    loginInProgress = false;
   } catch (error) {
     console.error('TMDB login start error:', error);
     showToast('Could not start TMDB sign in.', 'error');
+    loginInProgress = false;
   }
 }
 
@@ -130,6 +145,88 @@ function clearTmdbCallbackParams(url) {
   url.searchParams.delete('denied');
   window.history.replaceState({}, '', url.pathname + url.hash);
 }
+
+export async function finishTmdbLoginFromStoredToken() {
+  const requestToken = sessionStorage.getItem('tmdb_request_token');
+
+  if (!requestToken) {
+    showToast('No approved TMDB token was found.', 'error');
+    return false;
+  }
+
+  try {
+    const sessionResponse = await fetch(
+      `${CONFIG.TMDB_BASE_URL}/authentication/session/new?api_key=${CONFIG.TMDB_API_KEY}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          request_token: requestToken
+        })
+      }
+    );
+
+    if (!sessionResponse.ok) {
+      throw new Error('Could not create TMDB session.');
+    }
+
+    const sessionData = await sessionResponse.json();
+
+    console.log("SESSION DATA:", sessionData);
+
+    if (!sessionData.session_id) {
+      throw new Error('TMDB did not return a session ID.');
+    }
+
+    sessionStorage.setItem(
+      'tmdb_session_id',
+      sessionData.session_id
+    );
+
+    const accountResponse = await fetch(
+      `${CONFIG.TMDB_BASE_URL}/account/account_id?api_key=${CONFIG.TMDB_API_KEY}&session_id=${sessionData.session_id}`
+    );
+
+    if (!accountResponse.ok) {
+      throw new Error('Could not load account details.');
+    }
+
+    const accountData = await accountResponse.json();
+
+    console.log("ACCOUNT DATA:", accountData);
+
+    if (!accountData.id) {
+      throw new Error('No account ID returned.');
+    }
+
+    sessionStorage.setItem(
+      'tmdb_account_id',
+      String(accountData.id)
+    );
+
+    showToast('Signed in successfully.', 'success');
+
+    window.location.hash = 'lists';
+
+    return true;
+
+  } catch (error) {
+    console.error(
+      'TMDB finish login error:',
+      error
+    );
+
+    showToast(
+      'Could not complete TMDB sign in.',
+      'error'
+    );
+
+    return false;
+  }
+}
+
 
 // ── Router ───────────────────────────────────────────────────────
 function router() {
@@ -229,7 +326,6 @@ function initNav() {
 // ── Bootstrap ────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   initNav();
-  handleTmdbAuthCallback();
   window.addEventListener('hashchange', router);
   router();
 });
