@@ -26,8 +26,6 @@ export function showSpinner() {
 
 export async function startTmdbLogin() {
   try {
-    const redirectTo = window.location.origin + window.location.pathname;
-
     const response = await fetch(
       `${CONFIG.TMDB_BASE_URL}/authentication/token/new?api_key=${CONFIG.TMDB_API_KEY}`
     );
@@ -42,10 +40,11 @@ export async function startTmdbLogin() {
       throw new Error('TMDB did not return a request token.');
     }
 
+    console.log('TMDB request token:', data.request_token);
     sessionStorage.setItem('tmdb_request_token', data.request_token);
 
     window.location.href =
-      `https://www.themoviedb.org/auth/access?request_token=${data.request_token}&redirect_to=${encodeURIComponent(redirectTo)}`;
+      `https://www.themoviedb.org/auth/access?request_token=${data.request_token}`;
   } catch (error) {
     console.error('TMDB login start error:', error);
     showToast('Could not start TMDB sign in.', 'error');
