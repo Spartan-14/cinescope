@@ -40,11 +40,16 @@ export async function startTmdbLogin() {
       throw new Error('TMDB did not return a request token.');
     }
 
-    console.log('TMDB request token:', data.request_token);
+    console.log('TMDB raw token:', data.request_token);
+    console.log(
+      'TMDB auth URL:',
+      `https://www.themoviedb.org/auth/access?request_token=${encodeURIComponent(data.request_token)}`
+    );
+
     sessionStorage.setItem('tmdb_request_token', data.request_token);
 
     window.location.href =
-      `https://www.themoviedb.org/auth/access?request_token=${data.request_token}`;
+      `https://www.themoviedb.org/auth/access?request_token=${encodeURIComponent(data.request_token)}`;
   } catch (error) {
     console.error('TMDB login start error:', error);
     showToast('Could not start TMDB sign in.', 'error');
