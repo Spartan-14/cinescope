@@ -45,9 +45,15 @@ export function renderSearch(params = {}) {
 function fetchSearchResults(query, page) {
   const url = `${CONFIG.TMDB_BASE_URL}/search/movie?api_key=${CONFIG.TMDB_API_KEY}&query=${encodeURIComponent(query)}&page=${page}`;
 
+  console.log("Search URL:", url);
+
   fetch(url)
-    .then(res => res.json())
+    .then(res => {
+      console.log("Response status:", res.status);
+      return res.json();
+    })
     .then(data => {
+      console.log("TMDB data:", data);
       renderResults(data.results);
       renderPagination(query, data.page, data.total_pages);
     })
