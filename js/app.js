@@ -229,6 +229,7 @@ function initNav() {
 // ── Bootstrap ────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   initNav();
+  handleTmdbAuthCallback();
   window.addEventListener('hashchange', router);
   router();
 });
