@@ -32,9 +32,15 @@ function router() {
     import('./views/home.js').then(m => m.renderHome());
 
   } else if (hash.startsWith('search')) {
-    const qs  = hash.includes('?') ? hash.split('?')[1] : '';
-    const q   = new URLSearchParams(qs).get('q') || '';
-    import('./views/search.js').then(m => m.renderSearch(q));
+    const qs = hash.includes('?') ? hash.split('?')[1] : '';
+  const searchParams = new URLSearchParams(qs);
+
+  const params = {
+    q: searchParams.get('q') || '',
+    page: searchParams.get('page') || '1'
+  };
+
+    import('./views/search.js').then(m => m.renderSearch(params));
 
   } else if (hash.startsWith('detail/')) {
     const id = hash.split('/')[1];
