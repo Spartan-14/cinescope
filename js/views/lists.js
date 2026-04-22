@@ -1,6 +1,6 @@
 // View 4 — Authentication & Personal Lists
 
-import { CONFIG, showToast, startTmdbLogin } from '../app.js';
+import { CONFIG, showToast, startTmdbLogin, finishTmdbLoginFromStoredToken } from '../app.js';
 import { buildMovieCard } from './home.js';
 
 export async function renderLists() {
@@ -52,8 +52,9 @@ function renderLoggedOutState() {
         <div class="empty-state-icon">🔐</div>
         <h3>Sign in to view your lists</h3>
         <p>Your Favorites and Watchlist will appear here after TMDB login is connected.</p>
-        <div style="margin-top: 1.25rem;">
+        <div style="margin-top: 1.25rem; display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap;">
           <button class="btn btn-primary" id="tmdb-login-btn">Sign In with TMDB</button>
+          <button class="btn btn-outline" id="tmdb-complete-login-btn">I Approved It</button>
         </div>
       </div>
     </div>
@@ -61,6 +62,10 @@ function renderLoggedOutState() {
 
   document.getElementById('tmdb-login-btn')?.addEventListener('click', () => {
     startTmdbLogin();
+  });
+
+  document.getElementById('tmdb-complete-login-btn')?.addEventListener('click', async () => {
+    await finishTmdbLoginFromStoredToken();
   });
 }
 
