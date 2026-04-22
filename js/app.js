@@ -24,6 +24,109 @@ export function showSpinner() {
     '<div class="spinner-fullpage"><div class="spinner"></div></div>';
 }
 
+export async function startTmdbLogin() {
+  try {
+    const redirectTo = window.location.origin + window.location.pathname;
+
+    const response = await fetch(
+      `${CONFIG.TMDB_BASE_URL}/authentication/token/new?api_key=${CONFIG.TMDB_API_KEY}`
+    );
+
+    if (!response.ok) {
+      throw new Error('Could not create request token.');
+    }
+
+    const data = await response.json();
+
+    if (!data.request_token) {
+      throw new Error('TMDB did not return a request token.');
+    }
+
+    sessionStorage.setItem('tmdb_request_token', data.request_token);
+
+    window.location.href =
+      `https://www.themoviedb.org/auth/access?request_token=${data.request_token}&redirect_to=${encodeURIComponent(redirectTo)}`;
+  } catch (error) {
+    console.error('TMDB login start error:', error);
+    showToast('Could not start TMDB sign in.', 'error');
+  }
+}
+
+export async function handleTmdbAuthCallback() {
+  const url = new URL(window.location.href);
+  const approved = url.searchParams.get('approved');
+  const requestTokenFromUrl = url.searchParams.get('request_token');
+  const denied = url.searchParams.get('denied');
+
+  if (denied) {
+    showToast('TMDB sign in was cancelled.', 'error');
+    clearTmdbCallbackParams(url);
+    return;
+  }
+
+  if (approved !== 'true' || !requestTokenFromUrl) {
+    return;
+  }
+
+  try {
+    const sessionResponse = await fetch(
+      `${CONFIG.TMDB_BASE_URL}/authentication/session/new?api_key=${CONFIG.TMDB_API_KEY}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          request_token: requestTokenFromUrl
+        })
+      }
+    );
+
+    if (!sessionResponse.ok) {
+      throw new Error('Could not create TMDB session.');
+    }
+
+    const sessionData = await sessionResponse.json();
+
+    if (!sessionData.session_id) {
+      throw new Error('TMDB did not return a session ID.');
+    }
+
+    sessionStorage.setItem('tmdb_session_id', sessionData.session_id);
+
+    const accountResponse = await fetch(
+      `${CONFIG.TMDB_BASE_URL}/account/account_id?api_key=${CONFIG.TMDB_API_KEY}&session_id=${sessionData.session_id}`
+    );
+
+    if (!accountResponse.ok) {
+      throw new Error('Could not load TMDB account details.');
+    }
+
+    const accountData = await accountResponse.json();
+
+    if (!accountData.id) {
+      throw new Error('TMDB did not return an account ID.');
+    }
+
+    sessionStorage.setItem('tmdb_account_id', String(accountData.id));
+
+    clearTmdbCallbackParams(url);
+    showToast('Signed in successfully.', 'success');
+    window.location.hash = 'lists';
+  } catch (error) {
+    console.error('TMDB auth callback error:', error);
+    showToast('Could not complete TMDB sign in.', 'error');
+    clearTmdbCallbackParams(url);
+  }
+}
+
+function clearTmdbCallbackParams(url) {
+  url.searchParams.delete('approved');
+  url.searchParams.delete('request_token');
+  url.searchParams.delete('denied');
+  window.history.replaceState({}, '', url.pathname + url.hash);
+}
+
 // ── Router ───────────────────────────────────────────────────────
 function router() {
   const hash = window.location.hash.slice(1) || 'home';
