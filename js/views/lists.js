@@ -1,6 +1,6 @@
 // View 4 — Authentication & Personal Lists
 
-import { CONFIG, showToast } from '../app.js';
+import { CONFIG, showToast, startTmdbLogin } from '../app.js';
 import { buildMovieCard } from './home.js';
 
 export async function renderLists() {
