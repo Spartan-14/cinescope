@@ -60,7 +60,7 @@ function renderLoggedOutState() {
   `;
 
   document.getElementById('tmdb-login-btn')?.addEventListener('click', () => {
-    showToast('TMDB approval redirect will be wired in the next step.');
+    startTmdbLogin();
   });
 }
 
